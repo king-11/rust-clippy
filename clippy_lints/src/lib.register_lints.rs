@@ -332,6 +332,7 @@ store.register_lints(&[
     methods::MAP_ERR_IGNORE,
     methods::MAP_FLATTEN,
     methods::MAP_IDENTITY,
+    methods::MAP_THEN_UNWRAP,
     methods::MAP_UNWRAP_OR,
     methods::MUT_MUTEX_LOCK,
     methods::NAIVE_BYTECOUNT,

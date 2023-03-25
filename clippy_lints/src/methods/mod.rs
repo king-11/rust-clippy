@@ -1,3 +1,4 @@
+mod map_then_unwrap;
 mod bind_instead_of_map;
 mod bytecount;
 mod bytes_count_to_len;
@@ -3036,6 +3037,27 @@ declare_clippy_lint! {
     "use of `File::read_to_end` or `File::read_to_string`"
 }
 
+declare_clippy_lint! {
+    /// ### What it does
+    /// Checks for use of map(...).unwrap()
+    ///
+    /// ### Why is this bad?
+    /// The unwrap effectively only applies to the value before .map(..), so putting it after .map(..) needlessly complicates the semantics of the code.
+    ///
+    /// ### Example
+    /// ```rust
+    /// opt.map(|n| n * 2).unwrap()
+    /// ```
+    /// Use instead:
+    /// ```rust
+    /// opt.unwrap() * 2
+    /// ```
+    #[clippy::version = "1.65.0"]
+    pub MAP_THEN_UNWRAP,
+    pedantic,
+    "use of map(..).unwrap()"
+}
+
 pub struct Methods {
     avoid_breaking_exported_api: bool,
     msrv: Option<RustcVersion>,
@@ -3159,6 +3181,7 @@ impl_lint_pass!(Methods => [
     UNNECESSARY_SORT_BY,
     VEC_RESIZE_TO_ZERO,
     VERBOSE_FILE_READS,
+    MAP_THEN_UNWRAP,
 ]);
 
 /// Extracts a method call name, args, and `Span` of the method name.
@@ -3626,6 +3649,9 @@ impl Methods {
                         Some(("or", recv, [or_arg], or_span)) => {
                             or_then_unwrap::check(cx, expr, recv, or_arg, or_span);
                         },
+                        Some(("map", recv, [map_arg], map_span)) => {
+                            map_then_unwrap::check(cx, expr, recv, map_arg, map_span)
+                        }
                         _ => {},
                     }
                     unwrap_used::check(cx, expr, recv, false, self.allow_unwrap_in_tests);

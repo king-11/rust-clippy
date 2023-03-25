@@ -279,6 +279,7 @@ docs! {
     "map_err_ignore",
     "map_flatten",
     "map_identity",
+    "map_then_unwrap",
     "map_unwrap_or",
     "match_as_ref",
     "match_bool",
